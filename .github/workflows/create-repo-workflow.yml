@@ -1,0 +1,29 @@
+name: Create Repository from Template
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo-name:
+        description: 'Name of the new repository'
+        required: true
+      owner:
+        description: 'Owner of the new repository'
+        required: true
+
+jobs:
+  create-repo:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Create Repository from Template
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        curl -X POST \
+          -H "Authorization: token ${{ secrets.ORG_ADMIN_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/SudhirAeroTek/create-repository-org-under-sudhiraerotek/generate \
+          -d '{"owner":"${{ github.event.inputs.owner }}","name":"${{ github.event.inputs.repo-name }}"}'
